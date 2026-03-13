@@ -1,5 +1,7 @@
 package com.synapse.social.studioasinc.shared.domain.model.chat
 
+import com.synapse.social.studioasinc.shared.domain.model.ReactionType
+
 data class Message(
     val id: String,
     val chatId: String,
@@ -17,7 +19,13 @@ data class Message(
     val isEncrypted: Boolean = false,
     val encryptedContent: String? = null,
     val expiresAt: String? = null,
-    val encryptionFailureReason: String? = null
+    val encryptionFailureReason: String? = null,
+    val reactions: Map<ReactionType, Int> = emptyMap(),
+    val userReaction: ReactionType? = null
+    // TODO: Add link preview support
+    // - linkPreview: LinkPreview? = null (title, description, imageUrl, url)
+    // - Extract URLs from content and fetch metadata
+    // - Cache preview data to avoid repeated fetches
 ) {
     fun isFromMe(currentUserId: String): Boolean = senderId == currentUserId
 }

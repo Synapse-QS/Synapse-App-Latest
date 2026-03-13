@@ -14,7 +14,8 @@ interface ChatRepository {
     suspend fun editMessage(messageId: String, newContent: String): Result<Unit>
     suspend fun deleteMessage(messageId: String): Result<Unit>
     suspend fun deleteMessageForMe(messageId: String): Result<Unit>
-    suspend fun uploadMedia(chatId: String, fileBytes: ByteArray, fileName: String, contentType: String): Result<String>
+    suspend fun uploadMedia(chatId: String, filePath: String, fileName: String, contentType: String, provider: com.synapse.social.studioasinc.shared.domain.model.StorageProvider? = null, config: com.synapse.social.studioasinc.shared.domain.model.StorageConfig? = null, onProgress: ((Int) -> Unit)? = null): Result<String>
+
     suspend fun broadcastTypingStatus(chatId: String, isTyping: Boolean): Result<Unit>
     fun subscribeToMessages(chatId: String): Flow<Message>
     fun subscribeToInboxUpdates(chatIds: List<String>): Flow<Message>
@@ -24,6 +25,6 @@ interface ChatRepository {
     fun getCurrentUserId(): String?
     suspend fun createGroupChat(name: String, participantIds: List<String>, avatarUrl: String? = null): Result<String>
     suspend fun getGroupMembers(chatId: String): Result<List<Pair<com.synapse.social.studioasinc.shared.domain.model.User, Boolean>>>
-    suspend fun addGroupMember(chatId: String, userId: String): Result<Unit>
+    suspend fun addGroupMembers(chatId: String, userIds: List<String>): Result<Unit>
     suspend fun removeGroupMember(chatId: String, userId: String): Result<Unit>
 }

@@ -1,46 +1,54 @@
 ---
 title: Privacy Policy
-description: Privacy Policy for Synapse Social.
+description: Our privacy policy.
 ---
 
-*Last updated: February 1, 2026*
+**Effective Date:** January 1, 2024
 
-At Synapse Social, we take your privacy seriously. This policy explains how we handle your data in our open-source social network client.
+At **Synapse Social**, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our application.
 
-## Data Collection
+## 1. Information We Collect
 
-Synapse is designed as a client for the Synapse Social network, which uses Supabase as a backend.
+### a. Personal Data
+When you create an account, we may collect:
+- Email address
+- Username
+- Profile picture
 
-- **Account Information:** When you create an account, we store your email address and basic profile information (username, display name, bio) in our database.
-- **Content:** Any posts, reels, comments, or messages you share are stored to be displayed to you and other users according to your visibility settings.
-- **Media:** Photos and videos you upload are stored in our storage buckets.
+### b. Content Data
+We store the content you post, including:
+- Posts and comments
+- Media (images, videos)
+- Interactions (likes, reposts)
 
-## Data Usage
+### c. Usage Data
+We collect information about how you interact with our service, such as:
+- Device information
+- IP address
+- Log data
 
-We use your data strictly to provide the social networking features of the app:
-- To authenticate your identity.
-- To display your profile and content to others.
-- To facilitate messaging and interactions.
+## 2. How We Use Your Information
+We use the collected data to:
+- Provide and maintain our service
+- Personalize your experience
+- Communicate with you about updates or security
+- Improve our application performance
 
-## Data Security
+## 3. Data Storage and Security
+We use **Supabase** for secure data storage. While we implement industry-standard security measures, no method of transmission over the internet is 100% secure. We are currently working on implementing **End-to-End Encryption (E2EE)** for private communications.
 
-- **Encryption:** We are working on implementing End-to-End Encryption (E2EE) for messages using the Double Ratchet protocol.
-- **Supabase Security:** We use Row Level Security (RLS) policies to ensure that only authorized users can access or modify specific data.
+## 4. Sharing Your Information
+We do not sell your personal data. We may share information only in the following circumstances:
+- With your consent
+- To comply with legal obligations
+- To protect the rights and safety of our users
 
-## Third-Party Services
-
-We may use third-party services for specific features:
-- **Supabase:** Backend database, authentication, and storage.
-- **Cloudinary:** Image optimization and delivery.
-- **Gemini AI:** Optional AI-powered summaries and explanations.
-
-## Your Rights
-
+## 5. Your Rights
 You have the right to:
-- Access your data.
-- Update your profile information.
-- Delete your account and associated data.
+- Access the personal data we hold about you
+- Request the correction or deletion of your data
+- Object to the processing of your data
 
-## Contact Us
-
-For privacy-related inquiries, please contact the maintainers through our official channels.
+## 6. Contact Us
+If you have any questions about this Privacy Policy, please contact us at:
+[privacy@studioasinc.com](mailto:privacy@studioasinc.com)

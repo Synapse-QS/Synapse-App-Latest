@@ -1,52 +1,44 @@
 ---
 title: Terms of Service
-description: Terms of Service for Synapse Social.
+description: Our terms of service.
 ---
 
-*Last updated: February 1, 2026*
+**Effective Date:** January 1, 2024
 
-By using Synapse Social, you agree to the following terms and conditions.
+By accessing or using **Synapse Social**, you agree to be bound by these Terms of Service. Please read them carefully.
 
 ## 1. Acceptance of Terms
+By creating an account or using our services, you agree to these Terms and our Privacy Policy. If you do not agree, you may not use the service.
 
-By accessing or using the Synapse Social application, you agree to be bound by these Terms of Service and all applicable laws and regulations.
-
-## 2. Open Source License
-
-Synapse Social is open-source software licensed under the **GNU Affero General Public License v3 (AGPLv3)**. You are free to use, modify, and distribute the software in accordance with the terms of that license.
-
-## 3. User Accounts
-
+## 2. User Accounts
 - You must provide accurate and complete information when creating an account.
-- You are responsible for maintaining the confidentiality of your account credentials.
-- You are responsible for all activities that occur under your account.
+- You are responsible for maintaining the security of your account credentials.
+- You must notify us immediately of any unauthorized use of your account.
 
-## 4. User Content
-
+## 3. User Content
 - You retain ownership of the content you post on Synapse.
-- By posting content, you grant Synapse a license to display, distribute, and reproduce your content for the purpose of providing the service.
-- You agree not to post content that is illegal, harmful, or violates the rights of others.
+- By posting content, you grant us a non-exclusive, royalty-free, worldwide license to use, display, and distribute your content in connection with the service.
+- You are solely responsible for the content you post.
 
-## 5. Prohibited Conduct
-
+## 4. Prohibited Conduct
 You agree not to:
-- Use the service for any illegal purpose.
-- Attempt to interfere with the proper functioning of the service.
-- Harass or harm other users.
-- Reverse engineer or attempt to extract source code from the application (except as permitted by the AGPLv3 license).
+- Post illegal, harmful, or offensive content.
+- Harass or bully other users.
+- Attempt to gain unauthorized access to our systems.
+- Use the service for any unauthorized commercial purposes.
 
-## 6. Termination
+## 5. Termination
+We reserve the right to suspend or terminate your account at our sole discretion, without notice, for conduct that violates these Terms or is harmful to other users or us.
 
-We reserve the right to suspend or terminate your account if you violate these terms or engage in conduct that we deem harmful to the community.
+## 6. Disclaimers and Limitation of Liability
+The service is provided "as is" and "as available." We make no warranties, expressed or implied. In no event shall Synapse Social or StudioAs Inc. be liable for any damages arising out of your use of the service.
 
-## 7. Disclaimer of Warranty
+## 7. Changes to Terms
+We may update these Terms from time to time. We will notify you of any changes by posting the new Terms on this page. Your continued use of the service after changes are posted constitutes your acceptance of the new Terms.
 
-The software is provided "AS IS", without warranty of any kind. Use at your own risk.
+## 8. Governing Law
+These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which StudioAs Inc. is registered.
 
-## 8. Limitation of Liability
-
-In no event shall the maintainers of Synapse Social be liable for any damages arising out of the use or inability to use the service.
-
-## 9. Changes to Terms
-
-We may update these terms from time to time. Your continued use of the service after such changes constitutes your acceptance of the new terms.
+## 9. Contact Us
+If you have any questions about these Terms, please contact us at:
+[legal@studioasinc.com](mailto:legal@studioasinc.com)

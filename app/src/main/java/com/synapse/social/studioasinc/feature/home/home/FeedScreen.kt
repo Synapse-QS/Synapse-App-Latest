@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
 import com.synapse.social.studioasinc.R
 import androidx.compose.runtime.Composable
+import com.synapse.social.studioasinc.feature.home.home.components.QuickPostArea
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +64,7 @@ fun FeedScreen(
     onEditPost: (String) -> Unit,
     onStoryClick: (String) -> Unit = { _ -> },
     onAddStoryClick: () -> Unit = {},
+    onCreatePostClick: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -180,6 +182,13 @@ fun FeedScreen(
                 contentPadding = contentPadding
             ) {
 
+                item {
+                    QuickPostArea(
+                        userProfileUrl = currentUser?.avatar,
+                        onClick = onCreatePostClick
+                    )
+                }
+
                 item(key = "story_tray") {
 
 
@@ -208,10 +217,9 @@ fun FeedScreen(
                     )
                 }
 
-
                 items(
                     count = posts.itemCount,
-
+                    key = posts.itemKey { it.id },
                     contentType = posts.itemContentType { it.itemType }
                 ) { index ->
                     val feedItem = posts[index]

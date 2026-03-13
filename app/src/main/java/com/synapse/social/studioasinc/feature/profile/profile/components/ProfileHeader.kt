@@ -250,10 +250,8 @@ private fun ProfileActionButtons(
                 onClick = onAddStoryClick,
                 modifier = Modifier
                     .weight(1f)
-                    .height(Spacing.Medium)
+                    .height(Spacing.ButtonHeight)
             ) {
-                Icon(Icons.Default.Add, contentDescription = null)
-                Spacer(modifier = Modifier.width(Spacing.Small))
                 Text(stringResource(R.string.add_story))
             }
 
@@ -261,7 +259,7 @@ private fun ProfileActionButtons(
                 onClick = onEditProfileClick,
                 modifier = Modifier
                     .weight(1f)
-                    .height(Spacing.Medium)
+                    .height(Spacing.ButtonHeight)
             ) {
                 Text(stringResource(R.string.edit_profile))
             }
@@ -272,14 +270,14 @@ private fun ProfileActionButtons(
                 onClick = onFollowClick,
                 modifier = Modifier
                     .weight(1f)
-                    .height(Spacing.Medium)
+                    .height(Spacing.ButtonHeight)
             )
 
             OutlinedButton(
                 onClick = onMessageClick,
                 modifier = Modifier
                     .weight(1f)
-                    .height(Spacing.Medium)
+                    .height(Spacing.ButtonHeight)
             ) {
                 Text(stringResource(R.string.m_message))
             }
