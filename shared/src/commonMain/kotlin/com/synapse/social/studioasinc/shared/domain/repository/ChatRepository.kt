@@ -27,4 +27,9 @@ interface ChatRepository {
     suspend fun getGroupMembers(chatId: String): Result<List<Pair<com.synapse.social.studioasinc.shared.domain.model.User, Boolean>>>
     suspend fun addGroupMembers(chatId: String, userIds: List<String>): Result<Unit>
     suspend fun removeGroupMember(chatId: String, userId: String): Result<Unit>
+
+    suspend fun archiveChat(chatId: String): Result<Unit>
+    suspend fun unarchiveChat(chatId: String): Result<Unit>
+    suspend fun deleteChat(chatId: String, forEveryone: Boolean): Result<Unit>
+    suspend fun getArchivedConversations(): Result<List<Conversation>>
 }

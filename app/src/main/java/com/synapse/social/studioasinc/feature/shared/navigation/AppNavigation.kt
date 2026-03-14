@@ -134,7 +134,16 @@ fun NavGraphBuilder.inboxGraph(navController: NavHostController) {
                     onNavigateToChat = { chatId, userId, userName, avatar ->
                         navController.navigate(AppDestination.Chat(chatId, userId, userName, avatar))
                     },
-                    onNavigateToCreateGroup = { navController.navigate(AppDestination.CreateGroup) }
+                    onNavigateToCreateGroup = { navController.navigate(AppDestination.CreateGroup) },
+                    onNavigateToArchived = { navController.navigate(AppDestination.ArchivedChats) }
+                )
+            }
+    composable<AppDestination.ArchivedChats> {
+                com.synapse.social.studioasinc.feature.inbox.inbox.screens.ArchivedChatsScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToChat = { chatId, userId, userName, avatar ->
+                        navController.navigate(AppDestination.Chat(chatId, userId, userName, avatar))
+                    }
                 )
             }
     composable<AppDestination.Chat> { backStackEntry ->

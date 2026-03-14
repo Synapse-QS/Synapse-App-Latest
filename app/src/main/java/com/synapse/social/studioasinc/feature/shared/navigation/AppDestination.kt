@@ -44,4 +44,6 @@ sealed interface AppDestination {
     data object CreateGroup : AppDestination
     @Serializable
     data class GroupInfo(val chatId: String, val groupName: String) : AppDestination
+    @Serializable
+    data object ArchivedChats : AppDestination
 }

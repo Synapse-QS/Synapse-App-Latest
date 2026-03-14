@@ -140,6 +140,154 @@ class ChatMessagingRepository @Inject constructor(
     /**
      * Fetch messages for a specific chat, ordered chronologically.
      */
+
+    suspend fun archiveChat(chatId: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val currentUserId = getCurrentUserId() ?: return@withContext Result.failure(Exception("Not authenticated"))
+            client.from("chat_participants").update({
+                set("is_archived", true)
+            }) {
+                filter {
+                    eq("chat_id", chatId)
+                    eq("user_id", currentUserId)
+                }
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Napier.e("Error archiving chat", e, tag = TAG)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun unarchiveChat(chatId: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val currentUserId = getCurrentUserId() ?: return@withContext Result.failure(Exception("Not authenticated"))
+            client.from("chat_participants").update({
+                set("is_archived", false)
+            }) {
+                filter {
+                    eq("chat_id", chatId)
+                    eq("user_id", currentUserId)
+                }
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Napier.e("Error unarchiving chat", e, tag = TAG)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteChat(chatId: String, forEveryone: Boolean): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val currentUserId = getCurrentUserId() ?: return@withContext Result.failure(Exception("Not authenticated"))
+            if (forEveryone) {
+                client.from("chat_participants").delete {
+                    filter { eq("chat_id", chatId) }
+                }
+                client.from("messages").update({
+                    set("is_deleted", true)
+                }) {
+                    filter { eq("chat_id", chatId) }
+                }
+            } else {
+                client.from("chat_participants").delete {
+                    filter {
+                        eq("chat_id", chatId)
+                        eq("user_id", currentUserId)
+                    }
+                }
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Napier.e("Error deleting chat", e, tag = TAG)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getArchivedConversations(): Result<List<Conversation>> = withContext(Dispatchers.IO) {
+        try {
+            val currentUserId = getCurrentUserId()
+                ?: return@withContext Result.success(emptyList())
+
+            val myParticipations = client.from("chat_participants")
+                .select(columns = Columns.list("chat_id", "user_id", "is_archived")) {
+                    filter { eq("user_id", currentUserId) }
+                }.decodeList<ChatParticipantDto>()
+
+            val chatIds = myParticipations
+                .filter { it.isArchived }
+                .map { it.chatId }
+
+            if (chatIds.isEmpty()) return@withContext Result.success(emptyList())
+
+            val otherParticipantsList = client.from("chat_participants")
+                .select(columns = Columns.list("chat_id", "user_id")) {
+                    filter {
+                        isIn("chat_id", chatIds)
+                        neq("user_id", currentUserId)
+                    }
+                }.decodeList<ChatParticipantDto>()
+
+            val otherParticipantsByChat = otherParticipantsList.groupBy { it.chatId }
+            val otherUserIds = otherParticipantsList.map { it.userId }.distinct()
+
+            val otherUsers = if (otherUserIds.isNotEmpty()) {
+                client.from("users")
+                    .select {
+                        filter { isIn("uid", otherUserIds) }
+                    }.decodeList<User>().associateBy { it.uid }
+            } else {
+                emptyMap()
+            }
+
+            val lastMessagesDeferred = coroutineScope {
+                chatIds.associateWith { chatId ->
+                    async {
+                        try {
+                            client.from("messages")
+                                .select {
+                                    filter {
+                                        eq("chat_id", chatId)
+                                        eq("is_deleted", false)
+                                    }
+                                    order("created_at", Order.DESCENDING)
+                                    limit(1)
+                                }.decodeList<ChatMessage>().firstOrNull()
+                        } catch (e: Exception) {
+                            Napier.e("Error loading last message for $chatId", e, tag = TAG)
+                            null
+                        }
+                    }
+                }
+            }
+
+            val lastMessageByChat = lastMessagesDeferred.mapValues { it.value.await() }
+
+            val conversations = chatIds.mapNotNull { chatId ->
+                val otherUserId = otherParticipantsByChat[chatId]?.firstOrNull()?.userId ?: return@mapNotNull null
+                val otherUser = otherUsers[otherUserId]
+                val lastMsg = lastMessageByChat[chatId]
+
+                Conversation(
+                    chatId = chatId,
+                    participantId = otherUserId,
+                    participantName = otherUser?.displayName ?: otherUser?.username ?: otherUserId,
+                    participantAvatar = otherUser?.avatar,
+                    lastMessage = lastMsg?.content ?: "No messages yet",
+                    lastMessageTime = lastMsg?.createdAt,
+                    unreadCount = 0,
+                    isOnline = otherUser?.status?.name == "ONLINE"
+                )
+            }
+
+            Result.success(conversations.sortedByDescending { it.lastMessageTime })
+        } catch (e: Exception) {
+            Napier.e("Error loading archived conversations", e, tag = TAG)
+            Result.failure(e)
+        }
+    }
+
+
     suspend fun getMessages(chatId: String, limit: Int = 50): Result<List<ChatMessage>> = withContext(Dispatchers.IO) {
         try {
             val messages = client.from("messages")

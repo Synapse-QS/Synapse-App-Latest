@@ -550,6 +550,39 @@ object RepositoryModule {
         )
     }
 
+
+    @Provides
+    @Singleton
+    fun provideArchiveChatUseCase(
+        chatRepository: com.synapse.social.studioasinc.shared.domain.repository.ChatRepository
+    ): com.synapse.social.studioasinc.shared.domain.usecase.chat.ArchiveChatUseCase {
+        return com.synapse.social.studioasinc.shared.domain.usecase.chat.ArchiveChatUseCase(chatRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUnarchiveChatUseCase(
+        chatRepository: com.synapse.social.studioasinc.shared.domain.repository.ChatRepository
+    ): com.synapse.social.studioasinc.shared.domain.usecase.chat.UnarchiveChatUseCase {
+        return com.synapse.social.studioasinc.shared.domain.usecase.chat.UnarchiveChatUseCase(chatRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteChatUseCase(
+        chatRepository: com.synapse.social.studioasinc.shared.domain.repository.ChatRepository
+    ): com.synapse.social.studioasinc.shared.domain.usecase.chat.DeleteChatUseCase {
+        return com.synapse.social.studioasinc.shared.domain.usecase.chat.DeleteChatUseCase(chatRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetArchivedConversationsUseCase(
+        chatRepository: com.synapse.social.studioasinc.shared.domain.repository.ChatRepository
+    ): com.synapse.social.studioasinc.shared.domain.usecase.chat.GetArchivedConversationsUseCase {
+        return com.synapse.social.studioasinc.shared.domain.usecase.chat.GetArchivedConversationsUseCase(chatRepository)
+    }
+
     @Provides
     @Singleton
     fun provideGetConversationsUseCase(

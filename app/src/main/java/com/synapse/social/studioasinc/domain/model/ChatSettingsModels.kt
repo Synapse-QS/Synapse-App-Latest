@@ -42,6 +42,7 @@ enum class ChatListLayout {
 
 enum class ChatSwipeGesture {
     ARCHIVE,
+    UNARCHIVE,
     DELETE,
     MUTE,
     PIN,

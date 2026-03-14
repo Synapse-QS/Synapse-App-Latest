@@ -515,6 +515,93 @@ class SupabaseChatRepository(
     }
 
     override fun getCurrentUserId(): String? = dataSource.getCurrentUserId()
+
+    override suspend fun archiveChat(chatId: String): Result<Unit> = try {
+        dataSource.archiveChat(chatId)
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Logger.e("Error archiving chat", throwable = e)
+        Result.failure(e)
+    }
+
+    override suspend fun unarchiveChat(chatId: String): Result<Unit> = try {
+        dataSource.unarchiveChat(chatId)
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Logger.e("Error unarchiving chat", throwable = e)
+        Result.failure(e)
+    }
+
+    override suspend fun deleteChat(chatId: String, forEveryone: Boolean): Result<Unit> = try {
+        dataSource.deleteChat(chatId, forEveryone)
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Logger.e("Error deleting chat", throwable = e)
+        Result.failure(e)
+    }
+
+    override suspend fun getArchivedConversations(): Result<List<Conversation>> = try {
+        val conversations = dataSource.getArchivedConversations()
+        val currentUserId = getCurrentUserId() ?: ""
+
+        val resultList = mutableListOf<Conversation>()
+        for (triple in conversations) {
+            val participation = triple.first
+            val otherUser = triple.second
+            val chat = triple.third
+            val chatId = participation.chatId
+            val isGroup = chat?.isGroup == true
+
+            val lastMessage = dataSource.getLastMessage(chatId)
+            val unreadCount = dataSource.getUnreadCount(chatId, participation.lastReadAt)
+
+            val name = if (isGroup) chat?.name ?: "Group"
+                       else otherUser?.displayName ?: otherUser?.username ?: "Unknown User"
+
+            val avatar = if (isGroup) chat?.avatarUrl else otherUser?.avatar
+
+            val isOnline = !isGroup && otherUser?.status?.name == "ONLINE"
+
+            val groupMembers = if (isGroup) {
+                try {
+                    dataSource.getGroupMembers(chatId).map { it.first.uid }
+                } catch (e: Exception) {
+                    emptyList()
+                }
+            } else emptyList()
+
+            val msgText = lastMessage?.let { msg ->
+                try {
+                    msg.decryptIfNecessary(currentUserId).content
+                } catch (e: Exception) {
+                    Logger.e("Error decrypting message", throwable = e)
+                    msg.content
+                }
+            } ?: "No messages yet"
+
+            resultList.add(
+                Conversation(
+                    chatId = chatId,
+                    participantId = otherUser?.uid ?: chat?.id ?: "",
+                    participantName = name,
+                    participantAvatar = avatar,
+                    lastMessage = msgText,
+                    lastMessageTime = lastMessage?.createdAt,
+                    unreadCount = unreadCount,
+                    isOnline = isOnline,
+                    isGroup = isGroup,
+                    groupMembers = groupMembers
+                )
+            )
+        }
+
+        Result.success(resultList.sortedByDescending { it.lastMessageTime })
+    } catch (e: Exception) {
+        Logger.e("Error getting archived conversations", throwable = e)
+        Result.failure(e)
+    }
+
+
     override suspend fun createGroupChat(name: String, participantIds: List<String>, avatarUrl: String?): Result<String> = try {
         val chatId = dataSource.createGroupChat(name, participantIds, avatarUrl) ?: throw Exception("Failed to create group chat")
         Result.success(chatId)

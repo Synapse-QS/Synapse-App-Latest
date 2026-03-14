@@ -480,6 +480,113 @@ class SupabaseChatDataSource(private val client: SupabaseClientLib = SupabaseCli
         }
 
 
+
+    suspend fun archiveChat(chatId: String) = withContext(Dispatchers.IO) {
+        val currentUserId = getCurrentUserId() ?: throw Exception("Not authenticated")
+        client.postgrest.from("chat_participants").update(
+            { set("is_archived", true) }
+        ) {
+            filter {
+                eq("chat_id", chatId)
+                eq("user_id", currentUserId)
+            }
+        }
+    }
+
+    suspend fun unarchiveChat(chatId: String) = withContext(Dispatchers.IO) {
+        val currentUserId = getCurrentUserId() ?: throw Exception("Not authenticated")
+        client.postgrest.from("chat_participants").update(
+            { set("is_archived", false) }
+        ) {
+            filter {
+                eq("chat_id", chatId)
+                eq("user_id", currentUserId)
+            }
+        }
+    }
+
+    suspend fun deleteChat(chatId: String, forEveryone: Boolean) = withContext(Dispatchers.IO) {
+        val currentUserId = getCurrentUserId() ?: throw Exception("Not authenticated")
+        if (forEveryone) {
+            client.postgrest.from("chat_participants").delete {
+                filter { eq("chat_id", chatId) }
+            }
+            client.postgrest.from("messages").update(
+                { set("is_deleted", true) }
+            ) {
+                filter { eq("chat_id", chatId) }
+            }
+        } else {
+            client.postgrest.from("chat_participants").delete {
+                filter {
+                    eq("chat_id", chatId)
+                    eq("user_id", currentUserId)
+                }
+            }
+        }
+    }
+
+    suspend fun getArchivedConversations(): List<Triple<ChatParticipantDto, User?, ChatDto?>> = withContext(Dispatchers.IO) {
+        val currentUserId = getCurrentUserId() ?: return@withContext emptyList()
+        try {
+            val myParticipations = client.postgrest.from("chat_participants")
+                .select(columns = Columns.list("chat_id", "user_id", "is_archived", "last_read_at")) {
+                    filter { eq("user_id", currentUserId) }
+                }.decodeList<ChatParticipantDto>()
+
+            val archivedParticipations = myParticipations.filter { it.isArchived }
+            if (archivedParticipations.isEmpty()) return@withContext emptyList()
+
+            val chatIds = archivedParticipations.map { it.chatId }
+
+            val allOtherParticipants = client.postgrest.from("chat_participants")
+                .select(columns = Columns.list("chat_id", "user_id")) {
+                    filter {
+                        isIn("chat_id", chatIds)
+                        neq("user_id", currentUserId)
+                    }
+                }.decodeList<ChatParticipantDto>()
+
+            val otherParticipantsByChat = allOtherParticipants.groupBy { it.chatId }
+
+            val chats = if (chatIds.isNotEmpty()) {
+                client.postgrest.from("chats")
+                    .select(columns = Columns.list("id", "name", "avatar_url", "is_group", "created_by")) {
+                        filter { isIn("id", chatIds) }
+                    }.decodeList<ChatDto>().associateBy { it.id }
+            } else {
+                emptyMap()
+            }
+
+            val otherUserIds = allOtherParticipants.map { it.userId }.distinct()
+            val otherUsers = if (otherUserIds.isNotEmpty()) {
+                client.postgrest.from("users")
+                    .select(columns = Columns.list("uid", "username", "display_name", "avatar_url", "status")) {
+                        filter { isIn("uid", otherUserIds) }
+                    }.decodeList<User>().associateBy { it.uid }
+            } else {
+                emptyMap()
+            }
+
+            val result = archivedParticipations.map { participation ->
+                val chatId = participation.chatId
+                val chat = chats[chatId]
+                val isGroup = chat?.isGroup == true
+
+                val participantUser = if (isGroup) null else {
+                    val otherUserId = otherParticipantsByChat[chatId]?.firstOrNull()?.userId
+                    otherUserId?.let { otherUsers[it] }
+                }
+
+                Triple(participation, participantUser, chat)
+            }
+            result
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+
     suspend fun broadcastTypingStatus(chatId: String, isTyping: Boolean) = 
         withContext(Dispatchers.IO) {
             try {

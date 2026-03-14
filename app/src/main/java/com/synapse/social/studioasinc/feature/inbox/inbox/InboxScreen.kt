@@ -31,6 +31,7 @@ fun InboxScreen(
     onNavigateToProfile: (String) -> Unit,
     onNavigateToChat: (String, String?, String?, String?) -> Unit,
     onNavigateToCreateGroup: () -> Unit = {},
+    onNavigateToArchived: () -> Unit = {},
     viewModel: InboxViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -141,7 +142,16 @@ fun InboxScreen(
                     isLocked = { viewModel.isChatLocked(it) },
                     onRetry = { viewModel.loadConversations() },
                     chatListLayout = chatListLayout,
-                    chatSwipeGesture = chatSwipeGesture
+                    chatSwipeGesture = chatSwipeGesture,
+                    archivedCount = viewModel.archivedCount.collectAsState().value,
+                    onSwipeAction = { chatId, gesture ->
+                        if (gesture == com.synapse.social.studioasinc.domain.model.ChatSwipeGesture.DELETE) {
+                            viewModel.deleteChat(chatId, false)
+                        } else if (gesture == com.synapse.social.studioasinc.domain.model.ChatSwipeGesture.ARCHIVE) {
+                            viewModel.archiveChat(chatId)
+                        }
+                    },
+                    onNavigateToArchived = onNavigateToArchived
                 )
                 1 -> CallsTabScreen()
                 2 -> ContactsTabScreen()
