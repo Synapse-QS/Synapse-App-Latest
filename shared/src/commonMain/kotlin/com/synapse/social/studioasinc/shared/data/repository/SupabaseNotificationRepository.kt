@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import com.synapse.social.studioasinc.shared.util.SynapseIO
 
 import kotlinx.coroutines.launch
 import io.github.jan.supabase.realtime.channel
@@ -84,7 +85,7 @@ class SupabaseNotificationRepository(
                 }
             }
 
-            launch(Dispatchers.IO) {
+            launch(Dispatchers.SynapseIO) {
                 try {
                     channel.subscribe()
                 } catch (e: Exception) {

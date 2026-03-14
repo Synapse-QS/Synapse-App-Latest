@@ -1,5 +1,7 @@
 package com.synapse.social.studioasinc.core.di
 
+import com.synapse.social.studioasinc.shared.domain.usecase.mesh.SyncMeshDataUseCase
+
 import android.content.Context
 import android.content.SharedPreferences
 import com.synapse.social.studioasinc.shared.core.network.SupabaseClient
@@ -676,4 +678,13 @@ object RepositoryModule {
     ): com.synapse.social.studioasinc.shared.domain.usecase.chat.DeleteMessageForMeUseCase {
         return com.synapse.social.studioasinc.shared.domain.usecase.chat.DeleteMessageForMeUseCase(chatRepository)
     }
+    @Provides
+    @Singleton
+    fun provideSyncMeshDataUseCase(
+        meshRepository: MeshRepository,
+        chatRepository: com.synapse.social.studioasinc.shared.domain.repository.ChatRepository
+    ): SyncMeshDataUseCase {
+        return SyncMeshDataUseCase(meshRepository, chatRepository)
+    }
+
 }
