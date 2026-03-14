@@ -1,5 +1,9 @@
 package com.synapse.social.studioasinc.shared.data.repository
 
+import com.synapse.social.studioasinc.shared.domain.repository.MeshRepository
+import com.synapse.social.studioasinc.shared.domain.model.mesh.MeshMessage
+import com.synapse.social.studioasinc.shared.util.UUIDUtils
+
 import com.synapse.social.studioasinc.shared.core.network.SupabaseClient
 import com.synapse.social.studioasinc.shared.data.datasource.SupabaseChatDataSource
 import com.synapse.social.studioasinc.shared.data.mapper.ChatMapper.toDomain
@@ -33,8 +37,9 @@ class SupabaseChatRepository(
     private val client: SupabaseClientLib = SupabaseClient.client,
     private val signalProtocolManager: SignalProtocolManager? = null,
     private val mediaUploadRepository: MediaUploadRepository,
-    private val presenceRepository: com.synapse.social.studioasinc.shared.domain.repository.PresenceRepository? = null
-) : ChatRepository {
+    private val presenceRepository: com.synapse.social.studioasinc.shared.domain.repository.PresenceRepository? = null,
+    private val meshRepository: MeshRepository? = null,
+    ) : ChatRepository {
 
     // In-memory cache for decrypted content to avoid re-decryption failures
     // (especially for PreKeySignalMessages which consume the pre-key on first use)

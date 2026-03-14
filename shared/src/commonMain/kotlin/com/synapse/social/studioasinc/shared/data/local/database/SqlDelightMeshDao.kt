@@ -4,7 +4,7 @@ import com.synapse.social.studioasinc.shared.data.database.StorageDatabase
 import com.synapse.social.studioasinc.shared.domain.model.mesh.MeshMessage
 import com.synapse.social.studioasinc.shared.domain.model.mesh.MeshPeer
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+
 import kotlinx.coroutines.withContext
 
 class SqlDelightMeshDao(

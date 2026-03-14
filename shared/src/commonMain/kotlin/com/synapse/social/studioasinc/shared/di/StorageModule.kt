@@ -48,10 +48,12 @@ import app.cash.sqldelight.db.SqlDriver
 
 expect val storageDriverModule: Module
 expect val fileUploaderModule: Module
+expect val meshDataSourceModule: Module
 
 val storageModule = module {
     includes(storageDriverModule)
     includes(fileUploaderModule)
+    includes(meshDataSourceModule)
     includes(secureStorageModule)
 
     single {
