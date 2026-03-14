@@ -7,8 +7,10 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.synapse.social.studioasinc.domain.model.PendingAction
+import com.synapse.social.studioasinc.shared.domain.model.PendingAction
 import java.util.UUID
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 
 
@@ -39,7 +41,7 @@ class ActionQueue(context: Context) {
 
     fun add(action: PendingAction) {
         try {
-            Log.d(TAG, "Adding action to queue: ${action.actionType} for message ${action.messageId}")
+            Log.d(TAG, "Adding action to queue: ${action.actionType} for message ${action.targetId}")
 
             val currentActions = getAll().toMutableList()
             currentActions.add(action)
@@ -151,8 +153,10 @@ class ActionQueue(context: Context) {
         return PendingAction(
             id = UUID.randomUUID().toString(),
             actionType = PendingAction.ActionType.EDIT,
-            messageId = messageId,
-            parameters = mapOf("newContent" to kotlinx.serialization.json.JsonPrimitive(newContent))
+            targetId = messageId,
+            payload = buildJsonObject {
+                put("newContent", newContent)
+            }.toString()
         )
     }
 
@@ -162,8 +166,10 @@ class ActionQueue(context: Context) {
         return PendingAction(
             id = UUID.randomUUID().toString(),
             actionType = PendingAction.ActionType.DELETE,
-            messageId = messageId,
-            parameters = mapOf("deleteForEveryone" to kotlinx.serialization.json.JsonPrimitive(deleteForEveryone))
+            targetId = messageId,
+            payload = buildJsonObject {
+                put("deleteForEveryone", deleteForEveryone)
+            }.toString()
         )
     }
 
@@ -177,11 +183,11 @@ class ActionQueue(context: Context) {
         return PendingAction(
             id = UUID.randomUUID().toString(),
             actionType = PendingAction.ActionType.FORWARD,
-            messageId = messageId,
-            parameters = mapOf(
-                "messageData" to kotlinx.serialization.json.JsonPrimitive(gson.toJson(messageData)),
-                "targetChatIds" to kotlinx.serialization.json.JsonPrimitive(gson.toJson(targetChatIds))
-            )
+            targetId = messageId,
+            payload = buildJsonObject {
+                put("messageData", gson.toJson(messageData))
+                put("targetChatIds", gson.toJson(targetChatIds))
+            }.toString()
         )
     }
 }
